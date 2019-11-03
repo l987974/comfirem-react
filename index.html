@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<!-- 加载 React。-->
+		<!-- 注意: 部署时，将 "development.js" 替换为 "production.min.js"。-->
+		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+		<style>
+			.content{
+				position: fixed;
+				top: 0;
+				right:0;
+				left:0;
+				bottom: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background: rgba(0,0,0,.7);
+			}
+			.wrap{
+				width: 200px;
+				height: 150px;
+				border-radius: 10px;
+				background: #ffffff;
+				display: flex;
+				flex-direction: column;
+			}
+			.wrap--title{
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.wrap--btn{
+				display: flex;
+				height: 50px;
+				border-top: 1px solid gray;
+			}
+			.wrap--btn--left,.wrap--btn--right{
+				flex:1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.wrap--btn--right{
+				border-left: 1px solid gray;
+			}
+		  </style>
+	</head>
+	<body>
+		<div id="example"></div>
+		<script type="text/babel">
+			class Confirm1 extends React.Component {
+			   render() {
+			     return (
+			       <div className="wrap">
+						<div className="wrap--title">{this.props.title}</div>
+						<div className="wrap--btn"> 
+							<div className="wrap--btn--left" onClick={this.props.clickOne}>确定</div>
+							<div className="wrap--btn--right" onClick={this.props.clickTwo}>取消</div>
+						</div>
+			       </div>
+			     );
+			   }
+			 }
+			 var node = null;
+			 var confirm = function(title){
+				 var remove=()=>{
+					 if(node){
+						 ReactDOM.unmountComponentAtNode(node)
+						 document.body.removeChild(node)
+					 }
+				 }
+				 return new Promise((res,rej)=>{
+					 node = document.createElement('div')
+					 node.className = 'content'
+					 document.body.appendChild(node)
+					 ReactDOM.render(<Confirm1 title={title} clickOne = {()=>{
+						 res(true)
+						 remove()
+					 }} clickTwo = {()=>{
+						 res(false)
+						 remove()
+					 }}/>,node)
+				 })
+			 }
+			 class App extends React.Component {
+			   constructor(props) {
+			     super(props);
+			     this.state = {
+			       value: 'aaa'
+			     };
+			   }
+			   render() {
+			     return (
+			         <div>
+			         </div>
+			     );
+			   }
+			   async componentDidMount(){
+			       let res = await confirm("确定删除吗")
+			       if(res) {
+			           console.log("是")
+			       } else {
+			           console.log("否")
+			       }
+			   }
+			 }
+			 // ========================================
+			 
+			ReactDOM.render(
+				<App />,
+				document.getElementById('example')
+			);
+		</script>
+	</body>
+</html>
